@@ -1,8 +1,9 @@
 // -- GLOBAL --
 const textAreaEl = document.querySelector(".form__textarea");
 const counterEl = document.querySelector(".counter");
-const feedbackListEl = document.querySelector(".feedbacks");
 const formEl = document.querySelector(".form");
+const feedbackListEl = document.querySelector(".feedbacks");
+const submitBtnEl = document.querySelector(".submit-btn");
 
 // -- COUNTER COMPONENT --
 const handleInput = () => {
@@ -17,7 +18,6 @@ textAreaEl.addEventListener("input", handleInput);
 const handleSubmit = (event) => {
   event.preventDefault();
   let inputText = textAreaEl.value;
-  let listItem = `<li>${inputText}</li>`;
 
   if (inputText.length > 5 && inputText.includes("#")) {
     formEl.classList.add("form--valid");
@@ -29,23 +29,37 @@ const handleSubmit = (event) => {
     return;
   }
 
-  feedbackListEl.insertAdjacentHTML("beforeend", listItem);
-  textAreaEl.value = "";
-
   const upvoteCount = 0;
   const daysAgo = 0;
 
-  // Get company name
   const companyName = inputText
     .split(" ")
     .find((company) => company.includes("#"))
     .slice(1);
 
-  console.log(companyName);
-
-  // Get badge Letter
   const badgeLetter = companyName[0].toUpperCase();
-  console.log(badgeLetter);
+
+  let listItem = `
+    <li class="feedback">
+      <button class="upvote">
+        <i class="fa-solid fa-caret-up upvote__icon"></i>
+        <span class="upvote__count">${upvoteCount}</span>
+      </button>
+      <section class="feedback__badge">
+        <p class="feedback__letter">${badgeLetter}</p>
+      </section>
+      <div class=""feedback__content>
+        <p class="feedback__company">${companyName}</p>
+        <p class="feedback__text">${inputText}</p>
+      </div>
+      <p class="feedback__date">${daysAgo === 0 ? "NEW" : `${daysAgo}d`}</p>
+    </li>
+  `;
+
+  feedbackListEl.insertAdjacentHTML("beforeend", listItem);
+  textAreaEl.value = "";
+  submitBtnEl.blur();
+  counterEl.textContent = 150;
 };
 
 formEl.addEventListener("submit", handleSubmit);
