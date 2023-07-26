@@ -31,6 +31,21 @@ const handleSubmit = (event) => {
 
   feedbackListEl.insertAdjacentHTML("beforeend", listItem);
   textAreaEl.value = "";
+
+  const upvoteCount = 0;
+  const daysAgo = 0;
+
+  // Get company name
+  const companyName = inputText
+    .split(" ")
+    .find((company) => company.includes("#"))
+    .slice(1);
+
+  console.log(companyName);
+
+  // Get badge Letter
+  const badgeLetter = companyName[0].toUpperCase();
+  console.log(badgeLetter);
 };
 
 formEl.addEventListener("submit", handleSubmit);
