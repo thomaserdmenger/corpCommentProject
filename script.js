@@ -1,4 +1,6 @@
 // -- GLOBAL --
+const MAX_CHARS = 150;
+
 const textAreaEl = document.querySelector(".form__textarea");
 const counterEl = document.querySelector(".counter");
 const formEl = document.querySelector(".form");
@@ -7,7 +9,7 @@ const submitBtnEl = document.querySelector(".submit-btn");
 
 // -- COUNTER COMPONENT --
 const handleInput = () => {
-  const limit = 150;
+  const limit = MAX_CHARS;
   const inputLength = textAreaEl.value.length;
   counterEl.textContent = limit - inputLength;
 };
@@ -15,16 +17,21 @@ const handleInput = () => {
 textAreaEl.addEventListener("input", handleInput);
 
 // -- FORM COMPONENT --
+const showVisualIndicator = (textcheck) => {
+  const className = textcheck === "valid" ? "form--valid" : "form--invalid";
+
+  formEl.classList.add(className);
+  setTimeout(() => formEl.classList.remove(className), 2000);
+};
+
 const handleSubmit = (event) => {
   event.preventDefault();
   let inputText = textAreaEl.value;
 
   if (inputText.length > 5 && inputText.includes("#")) {
-    formEl.classList.add("form--valid");
-    setTimeout(() => formEl.classList.remove("form--valid"), 2000);
+    showVisualIndicator("valid");
   } else {
-    formEl.classList.add("form--invalid");
-    setTimeout(() => formEl.classList.remove("form--invalid"), 2000);
+    showVisualIndicator("invalid");
     textAreaEl.focus();
     return;
   }
@@ -59,7 +66,7 @@ const handleSubmit = (event) => {
   feedbackListEl.insertAdjacentHTML("beforeend", listItem);
   textAreaEl.value = "";
   submitBtnEl.blur();
-  counterEl.textContent = 150;
+  counterEl.textContent = MAX_CHARS;
 };
 
 formEl.addEventListener("submit", handleSubmit);
