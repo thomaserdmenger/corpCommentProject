@@ -8,6 +8,29 @@ const feedbackListEl = document.querySelector(".feedbacks");
 const submitBtnEl = document.querySelector(".submit-btn");
 const spinnerEl = document.querySelector(".spinner");
 
+const renderListItem = (feedbackItem) => {
+  const listItem = `
+  <li class="feedback">
+    <button class="upvote">
+      <i class="fa-solid fa-caret-up upvote__icon"></i>
+      <span class="upvote__count">${feedbackItem.upvoteCount}</span>
+    </button>
+    <section class="feedback__badge">
+      <p class="feedback__letter">${feedbackItem.badgeLetter}</p>
+    </section>
+    <div class=""feedback__content>
+      <p class="feedback__company">${feedbackItem.company}</p>
+      <p class="feedback__text">${feedbackItem.text}</p>
+    </div>
+    <p class="feedback__date">${
+      feedbackItem.daysAgo === 0 ? "NEW" : `${feedbackItem.daysAgo}d`
+    }</p>
+  </li>
+`;
+
+  feedbackListEl.insertAdjacentHTML("beforeend", listItem);
+};
+
 // -- COUNTER COMPONENT --
 const handleInput = () => {
   const limit = MAX_CHARS;
@@ -27,9 +50,9 @@ const showVisualIndicator = (textcheck) => {
 
 const handleSubmit = (event) => {
   event.preventDefault();
-  let inputText = textAreaEl.value;
+  const text = textAreaEl.value;
 
-  if (inputText.length > 5 && inputText.includes("#")) {
+  if (text.length > 5 && text.includes("#")) {
     showVisualIndicator("valid");
   } else {
     showVisualIndicator("invalid");
@@ -40,31 +63,23 @@ const handleSubmit = (event) => {
   const upvoteCount = 0;
   const daysAgo = 0;
 
-  const companyName = inputText
+  const company = text
     .split(" ")
     .find((company) => company.includes("#"))
     .slice(1);
 
-  const badgeLetter = companyName[0].toUpperCase();
+  const badgeLetter = company[0].toUpperCase();
 
-  let listItem = `
-    <li class="feedback">
-      <button class="upvote">
-        <i class="fa-solid fa-caret-up upvote__icon"></i>
-        <span class="upvote__count">${upvoteCount}</span>
-      </button>
-      <section class="feedback__badge">
-        <p class="feedback__letter">${badgeLetter}</p>
-      </section>
-      <div class=""feedback__content>
-        <p class="feedback__company">${companyName}</p>
-        <p class="feedback__text">${inputText}</p>
-      </div>
-      <p class="feedback__date">${daysAgo === 0 ? "NEW" : `${daysAgo}d`}</p>
-    </li>
-  `;
+  const feebackItem = {
+    upvoteCount: upvoteCount,
+    badgeLetter: badgeLetter,
+    company: company,
+    text: text,
+    daysAgo: daysAgo,
+  };
 
-  feedbackListEl.insertAdjacentHTML("beforeend", listItem);
+  renderListItem(feebackItem);
+
   textAreaEl.value = "";
   submitBtnEl.blur();
   counterEl.textContent = MAX_CHARS;
@@ -78,27 +93,7 @@ fetch("https://bytegrad.com/course-assets/js/1/api/feedbacks")
   .then((data) => {
     spinnerEl.remove();
 
-    data.feedbacks.forEach((item) => {
-      let fetchedListItem = `
-        <li class="feedback">
-          <button class="upvote">
-            <i class="fa-solid fa-caret-up upvote__icon"></i>
-            <span class="upvote__count">${item.upvoteCount}</span>
-          </button>
-          <section class="feedback__badge">
-            <p class="feedback__letter">${item.badgeLetter}</p>
-          </section>
-          <div class=""feedback__content>
-            <p class="feedback__company">${item.company}</p>
-            <p class="feedback__text">${item.text}</p>
-          </div>
-          <p class="feedback__date">${
-            item.daysAgo === 0 ? "NEW" : `${item.daysAgo}d`
-          }</p>
-        </li>`;
-
-      feedbackListEl.insertAdjacentHTML("beforeend", fetchedListItem);
-    });
+    data.feedbacks.forEach((item) => renderListItem(item));
   })
   .catch((error) => {
     // Failed to fetch feedback items. Error message: Failed to fetch
